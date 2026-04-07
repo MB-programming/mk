@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة التحكم | مخازن العناية</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/admin.css" />
+  <!-- Quill rich editor -->
+  <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet" />
+
+  <style>
+    /* ── Shared section header ───────────────────────────── */
+    .admin-section-header {
+      display: flex; align-items: center; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;
+    }
+    .admin-section-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: var(--gold-dim); display: flex; align-items: center;
+      justify-content: center; font-size: 20px; color: var(--gold); flex-shrink: 0;
+    }
+    .admin-section-title { font-size: 20px; font-weight: 800; color: var(--text); }
+    .admin-section-sub   { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+    .admin-section-link  {
+      display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--gold);
+      border: 1px solid var(--border-gold); border-radius: 8px; padding: 7px 14px;
+      background: rgba(255,207,6,0.05); transition: all .2s; margin-right: auto;
+    }
+    .admin-section-link:hover { background: var(--gold); color: #000; }
+
+    /* ── Page editor tab ─────────────────────────────────── */
+    .page-editor-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden;
+      display: flex; flex-direction: column;
+      margin-bottom: 20px; transition: border-color .25s;
+    }
+    .page-editor-card:hover { border-color: var(--border-gold); }
+    .page-editor-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px; background: rgba(0,0,0,0.18);
+      border-bottom: 1px solid var(--border);
+    }
+    .page-editor-header-left { display: flex; align-items: center; gap: 12px; }
+    .page-editor-hicon {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: var(--gold-dim); display: flex; align-items: center;
+      justify-content: center; font-size: 17px; color: var(--gold);
+    }
+    .page-editor-label { font-size: 15px; font-weight: 700; color: var(--text); }
+    .page-editor-sub   { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .page-preview-btn  {
+      display: flex; align-items: center; gap: 6px; font-size: 12px;
+      color: var(--gold); border: 1px solid var(--border-gold);
+      border-radius: 8px; padding: 6px 12px; background: rgba(255,207,6,0.05);
+      transition: all .2s; cursor: pointer;
+    }
+    .page-preview-btn:hover { background: var(--gold); color: #000; }
+    .page-editor-body .ql-toolbar { background: rgba(255,255,255,0.04); border-color: var(--border) !important; }
+    .page-editor-body .ql-container { min-height: 340px; border-color: var(--border) !important; font-size: 14px; }
+    .page-editor-body .ql-editor { min-height: 340px; color: #1a1a1a; background: #fff; }
+    .page-editor-footer {
+      padding: 12px 20px; border-top: 1px solid var(--border);
+      background: rgba(0,0,0,0.12); display: flex;
+      align-items: center; justify-content: space-between;
+    }
+    .page-editor-tip { font-size: 11px; color: var(--text-muted); }
+
+    /* ── Cache Manager ───────────────────────────────────── */
+    .cache-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-gold);
+      border-radius: 14px; overflow: hidden; margin-bottom: 24px;
+    }
+    .cache-card-header {
+      display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+      padding: 16px 20px;
+      background: rgba(255,207,6,0.06);
+      border-bottom: 1px solid var(--border-gold);
+    }
+    .cache-header-icon {
+      width: 46px; height: 46px; border-radius: 12px;
+      background: var(--gold-dim); display: flex; align-items: center;
+      justify-content: center; font-size: 20px; color: var(--gold); flex-shrink: 0;
+    }
+    .cache-header-text .cache-title { font-size: 15px; font-weight: 700; color: var(--text); }
+    .cache-header-text .cache-sub   { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .cache-live-badge {
+      display: flex; align-items: center; gap: 7px;
+      margin-right: auto; padding: 5px 14px;
+      border-radius: 20px; font-size: 12px; font-weight: 600;
+      background: rgba(37,211,102,0.1);
+      border: 1px solid rgba(37,211,102,0.3);
+      color: #25D366; white-space: nowrap;
+    }
+    .cache-live-badge.stale {
+      background: rgba(255,150,0,0.1);
+      border-color: rgba(255,150,0,0.3);
+      color: #ff9600;
+    }
+    .cache-live-badge.empty {
+      background: rgba(255,77,77,0.1);
+      border-color: rgba(255,77,77,0.3);
+      color: #ff4d4d;
+    }
+    .cache-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: currentColor; flex-shrink: 0;
+      animation: cdot 2s ease infinite;
+    }
+    @keyframes cdot { 0%,100%{opacity:1} 50%{opacity:.3} }
+    .cache-card-body { padding: 20px; }
+    .cache-stats-row {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
+      gap: 14px; margin-bottom: 20px;
+    }
+    .cache-stat {
+      background: rgba(0,0,0,0.15); border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px 16px;
+    }
+    .cache-stat-label { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; }
+    .cache-stat-value { font-size: 16px; font-weight: 700; color: var(--gold); }
+    .cache-controls {
+      display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px;
+      padding-top: 16px; border-top: 1px solid var(--border);
+    }
+    .cache-control-group { display: flex; flex-direction: column; gap: 6px; }
+    .cache-control-label { font-size: 11px; font-weight: 600; color: var(--text-muted); }
+    .btn-cache-clear {
+      display: flex; align-items: center; gap: 8px; padding: 10px 22px;
+      background: linear-gradient(135deg, #e55a2b 0%, #c0392b 100%);
+      color: #fff; border: none; border-radius: 10px;
+      font-size: 14px; font-weight: 700; font-family: var(--font);
+      cursor: pointer; transition: all .2s;
+      box-shadow: 0 2px 10px rgba(192,57,43,0.4);
+    }
+    .btn-cache-clear:hover:not(:disabled) {
+      transform: translateY(-2px); box-shadow: 0 4px 16px rgba(192,57,43,0.5);
+    }
+    .btn-cache-clear:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+    /* ── Competition tab ─────────────────────────────────── */
+    .comp-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden; margin-bottom: 20px;
+    }
+    .comp-card-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 20px; border-bottom: 1px solid var(--border);
+      font-size: 14px; font-weight: 700; color: var(--text);
+    }
+    .comp-card-header i { color: var(--gold); font-size: 15px; }
+    .comp-card-body { padding: 20px; }
+
+    .comp-field-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;
+    }
+    @media (max-width: 600px) { .comp-field-grid { grid-template-columns: 1fr; } }
+    .comp-field-full { grid-column: span 2; }
+    @media (max-width: 600px) { .comp-field-full { grid-column: span 1; } }
+    .comp-field-label {
+      font-size: 12px; font-weight: 600; color: var(--text-muted);
+      margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+    }
+    .comp-field-label i { color: var(--gold); }
+    .comp-field-hint { font-size: 11px; color: #888; margin-top: 5px; }
+    .comp-input-sm { max-width: 180px !important; }
+    .comp-toggle-row { display: flex; align-items: center; gap: 12px; margin-top: 6px; }
+    .comp-toggle-text { font-size: 13px; color: var(--text-dim); }
+    .comp-card-footer {
+      padding: 14px 20px; border-top: 1px solid var(--border);
+      background: rgba(0,0,0,0.1); display: flex; justify-content: flex-end;
+    }
+
+    /* Stats */
+    .comp-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px; margin-bottom: 20px;
+    }
+    .cstat {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 18px 16px;
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      transition: border-color .25s;
+    }
+    .cstat:hover { border-color: var(--border-gold); }
+    .cstat-icon { font-size: 22px; margin-bottom: 4px; }
+    .cstat-num  { font-size: 28px; font-weight: 800; line-height: 1; }
+    .cstat-lbl  { font-size: 12px; color: var(--text-muted); text-align: center; }
+
+    /* Filters */
+    .comp-filters { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px; }
+    .comp-search-row {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(0,0,0,0.2); border: 1px solid var(--border);
+      border-radius: 9px; padding: 9px 14px;
+    }
+    .comp-search-row i { color: var(--text-muted); font-size: 13px; flex-shrink: 0; }
+    .comp-search-row input {
+      flex: 1; background: none; border: none; outline: none;
+      color: var(--text); font-size: 13px; font-family: var(--font);
+    }
+    .comp-search-row input::placeholder { color: var(--text-muted); }
+    .comp-filter-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .comp-filter-sel {
+      background: #0c6070; border: 1px solid var(--border);
+      border-radius: 8px; padding: 7px 12px; font-size: 12px;
+      color: var(--text); font-family: var(--font); outline: none;
+      flex: 1; min-width: 110px; transition: border-color .2s;
+    }
+    .comp-filter-sel:focus { border-color: var(--gold); }
+    .comp-filter-sel option { background: #0e6d85; }
+    .comp-filter-btn {
+      display: flex; align-items: center; gap: 5px; padding: 7px 16px;
+      background: var(--gold); color: #000; border: none; border-radius: 8px;
+      font-size: 12px; font-weight: 700; font-family: var(--font);
+      cursor: pointer; white-space: nowrap; transition: all .2s;
+    }
+    .comp-filter-btn:hover { background: #fff; }
+    .comp-export-btn { background: rgba(37,211,102,0.12); color: #25D366; border: 1px solid rgba(37,211,102,0.3); }
+    .comp-export-btn:hover { background: #25D366; color: #000; }
+  </style>
+</head>
+<body class="dashboard-page">
+
+<!-- ============================================================
+  SIDEBAR
+============================================================ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <img src="../logo-white.png" alt="مخازن العناية" class="sidebar-logo" />
+  </div>
+
+  <nav class="sidebar-nav">
+    <button class="nav-item active" data-tab="branches">
+      <i class="fas fa-map-marker-alt"></i>
+      <span>الفروع</span>
+      <span class="nav-badge" id="badge-branches">0</span>
+    </button>
+    <button class="nav-item" data-tab="brands">
+      <i class="fas fa-tags"></i>
+      <span>البراندات</span>
+      <span class="nav-badge" id="badge-brands">0</span>
+    </button>
+    <button class="nav-item" data-tab="social">
+      <i class="fas fa-share-alt"></i>
+      <span>التواصل الاجتماعي</span>
+      <span class="nav-badge" id="badge-social">0</span>
+    </button>
+    <button class="nav-item" data-tab="contact">
+      <i class="fas fa-phone-alt"></i>
+      <span>معلومات التواصل</span>
+    </button>
+    <button class="nav-item" data-tab="categories">
+      <i class="fas fa-th-large"></i>
+      <span>الأقسام</span>
+      <span class="nav-badge" id="badge-categories">0</span>
+    </button>
+    <button class="nav-item" data-tab="performance">
+      <i class="fas fa-tachometer-alt"></i>
+      <span>الأداء</span>
+    </button>
+    <button class="nav-item" data-tab="tracking">
+      <i class="fab fa-google"></i>
+      <span>كودات التتبع</span>
+    </button>
+    <button class="nav-item" data-tab="pages">
+      <i class="fas fa-file-alt"></i>
+      <span>الصفحات</span>
+    </button>
+    <button class="nav-item" data-tab="competition">
+      <i class="fas fa-trophy"></i>
+      <span>المسابقة</span>
+      <span class="nav-badge" id="badge-competition">0</span>
+    </button>
+  </nav>
+
+  <div class="sidebar-footer">
+    <a href="../index.html" class="sidebar-link" target="_blank">
+      <i class="fas fa-external-link-alt"></i> عرض الموقع
+    </a>
+    <button class="sidebar-link" id="clear-cache-btn" onclick="clearSiteCache()">
+      <i class="fas fa-broom"></i> مسح الكاش
+    </button>
+    <button class="sidebar-link logout-btn" id="logout-btn">
+      <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+    </button>
+  </div>
+</aside>
+
+<!-- Overlay for mobile -->
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- ============================================================
+  MAIN CONTENT
+============================================================ -->
+<div class="main-content" id="main-content">
+
+  <!-- Top Bar -->
+  <header class="topbar">
+    <button class="menu-toggle" id="menu-toggle">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="topbar-title" id="topbar-title">الفروع</div>
+    <div class="topbar-user">
+      <span class="user-name" id="user-name">...</span>
+      <div class="user-avatar"><i class="fas fa-user"></i></div>
+    </div>
+  </header>
+
+  <!-- Content Area -->
+  <div class="content-area">
+
+    <!-- ======= BRANCHES TAB ======= -->
+    <div id="tab-branches" class="tab-content active">
+      <div class="tab-toolbar">
+        <div class="toolbar-left">
+          <h2 class="tab-title">إدارة الفروع</h2>
+          <span class="count-label" id="branches-count"></span>
+        </div>
+        <button class="btn-add" onclick="openModal('branch')">
+          <i class="fas fa-plus"></i> إضافة فرع
+        </button>
+      </div>
+      <div class="search-bar">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="بحث في الفروع..." oninput="filterTable('branches-table', this.value)" />
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="branches-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>الاسم (عربي)</th>
+              <th>المدينة</th>
+              <th>رقم الهاتف</th>
+              <th>الحالة</th>
+              <th>الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="branches-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ======= BRANDS TAB ======= -->
+    <div id="tab-brands" class="tab-content">
+      <div class="tab-toolbar">
+        <div class="toolbar-left">
+          <h2 class="tab-title">إدارة البراندات</h2>
+          <span class="count-label" id="brands-count"></span>
+        </div>
+        <button class="btn-add" onclick="openModal('brand')">
+          <i class="fas fa-plus"></i> إضافة براند
+        </button>
+      </div>
+      <div class="search-bar">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="بحث في البراندات..." oninput="filterTable('brands-table', this.value)" />
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="brands-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>الشعار</th>
+              <th>الاسم (إنجليزي)</th>
+              <th>الاسم (عربي)</th>
+              <th>الحالة</th>
+              <th>الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="brands-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ======= SOCIAL TAB ======= -->
+    <div id="tab-social" class="tab-content">
+      <div class="tab-toolbar">
+        <div class="toolbar-left">
+          <h2 class="tab-title">منصات التواصل الاجتماعي</h2>
+          <span class="count-label" id="social-count"></span>
+        </div>
+        <button class="btn-add" onclick="openModal('social')">
+          <i class="fas fa-plus"></i> إضافة منصة
+        </button>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="social-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>المنصة</th>
+              <th>المنصة (عربي)</th>
+              <th>اسم المستخدم</th>
+              <th>الرابط</th>
+              <th>الحالة</th>
+              <th>الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="social-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ======= CONTACT TAB ======= -->
+    <div id="tab-contact" class="tab-content">
+      <div class="tab-toolbar">
+        <div class="toolbar-left">
+          <h2 class="tab-title">معلومات التواصل</h2>
+        </div>
+        <button class="btn-add" onclick="openModal('contact')">
+          <i class="fas fa-plus"></i> إضافة معلومة
+        </button>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="contact-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>النوع</th>
+              <th>القيمة</th>
+              <th>التسمية</th>
+              <th>الحالة</th>
+              <th>الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="contact-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ======= CATEGORIES TAB ======= -->
+    <div id="tab-categories" class="tab-content">
+      <div class="tab-toolbar">
+        <div class="toolbar-left">
+          <h2 class="tab-title">إدارة الأقسام</h2>
+          <span class="count-label" id="categories-count"></span>
+        </div>
+        <button class="btn-add" onclick="openModal('category')">
+          <i class="fas fa-plus"></i> إضافة قسم
+        </button>
+      </div>
+      <div class="search-bar">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="بحث في الأقسام..." oninput="filterTable('categories-table', this.value)" />
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="categories-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>الأيقونة</th>
+              <th>اسم القسم</th>
+              <th>الـ Slug</th>
+              <th>الحالة</th>
+              <th>الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="categories-tbody"></tbody>
+        </table>
+      </div>
+
+      <!-- إعدادات السلايدر -->
+      <div class="settings-block" id="slider-settings-block">
+        <div class="settings-block-header">
+          <i class="fas fa-sliders-h"></i>
+          <h3>إعدادات السلايدر</h3>
+        </div>
+        <div class="form-row" style="margin-top:16px">
+          <div class="modal-form-group">
+            <label>عدد البطاقات الظاهرة</label>
+            <input type="number" class="form-input" id="slider_per_view" value="5" min="2" max="10" />
+          </div>
+          <div class="modal-form-group">
+            <label>تشغيل تلقائي</label>
+            <select class="form-input" id="slider_autoplay">
+              <option value="1">مفعّل</option>
+              <option value="0">معطّل</option>
+            </select>
+          </div>
+          <div class="modal-form-group">
+            <label>مدة الانتقال (ثانية)</label>
+            <input type="number" class="form-input" id="slider_speed_sec" value="3" step="0.5" min="1" max="10" />
+          </div>
+        </div>
+        <button class="btn-add" style="margin-top:12px" onclick="saveSliderSettings()">
+          <i class="fas fa-save"></i> حفظ إعدادات السلايدر
+        </button>
+      </div>
+    </div>
+
+    <!-- ======= PERFORMANCE TAB ======= -->
+    <div id="tab-performance" class="tab-content">
+      <div class="tab-toolbar">
+        <div class="toolbar-left">
+          <h2 class="tab-title">إعدادات الأداء والسرعة</h2>
+        </div>
+        <button class="btn-add" onclick="savePerfSettings()">
+          <i class="fas fa-save"></i> حفظ الإعدادات
+        </button>
+      </div>
+
+      <!-- ═══ CACHE MANAGER ═══ -->
+      <div class="cache-card">
+        <div class="cache-card-header">
+          <div class="cache-header-icon"><i class="fas fa-database"></i></div>
+          <div class="cache-header-text">
+            <div class="cache-title">إدارة كاش البيانات</div>
+            <div class="cache-sub">كاش HIT = 0 استعلام DB — استجابة فورية للزوار</div>
+          </div>
+          <div class="cache-live-badge empty" id="cache-live-badge">
+            <span class="cache-dot"></span>
+            <span id="cache-badge-text">جارٍ الفحص...</span>
+          </div>
+        </div>
+        <div class="cache-card-body">
+          <div class="cache-stats-row">
+            <div class="cache-stat">
+              <div class="cache-stat-label">آخر تحديث</div>
+              <div class="cache-stat-value" id="cache-generated-at">—</div>
+            </div>
+            <div class="cache-stat">
+              <div class="cache-stat-label">عمر الكاش</div>
+              <div class="cache-stat-value" id="cache-age">—</div>
+            </div>
+            <div class="cache-stat">
+              <div class="cache-stat-label">صالح لمدة أخرى</div>
+              <div class="cache-stat-value" id="cache-remaining">—</div>
+            </div>
+            <div class="cache-stat">
+              <div class="cache-stat-label">مدة التحديث التلقائي</div>
+              <div class="cache-stat-value" id="cache-ttl-display">—</div>
+            </div>
+          </div>
+          <div class="cache-controls">
+            <div class="cache-control-group">
+              <div class="cache-control-label">التحديث التلقائي (بعد)</div>
+              <select class="form-input" id="cache_ttl" style="min-width:200px">
+                <option value="60">كل دقيقة</option>
+                <option value="300">كل 5 دقائق</option>
+                <option value="900">كل 15 دقيقة</option>
+                <option value="1800">كل 30 دقيقة</option>
+                <option value="3600">كل ساعة</option>
+                <option value="21600">كل 6 ساعات</option>
+                <option value="86400">كل يوم</option>
+              </select>
+            </div>
+            <button class="btn-save" onclick="savePerfSettings()" style="padding:10px 18px">
+              <i class="fas fa-save"></i> حفظ المدة
+            </button>
+            <button class="btn-cache-clear" id="clear-cache-btn" onclick="clearSiteCache()">
+              <i class="fas fa-broom"></i> مسح الكاش الآن
+            </button>
+          </div>
+        </div>
+      </div><!-- /cache-card -->
+
+      <div class="perf-grid">
+
+        <!-- تأثيرات GSAP -->
+        <div class="perf-card">
+          <div class="perf-card-icon" style="color:#FFCF06"><i class="fas fa-magic"></i></div>
+          <div class="perf-card-body">
+            <h3>تأثيرات الأنيميشن</h3>
+            <p>GSAP يوفر تأثيرات سلسة ومتطورة. تعطيله يستبدلها بـ CSS فقط ويُحسّن الأداء على الأجهزة الضعيفة.</p>
+            <select class="form-input" id="perf_animations" style="margin-top:10px">
+              <option value="1">GSAP — تأثيرات غنية</option>
+              <option value="0">CSS فقط — أسرع وأخف</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- كاش API -->
+        <div class="perf-card">
+          <div class="perf-card-icon" style="color:#4CAF50"><i class="fas fa-server"></i></div>
+          <div class="perf-card-body">
+            <h3>كاش الـ API</h3>
+            <p>إضافة ترويسات <code>Cache-Control: max-age=300</code> تخلّي المتصفح والـ CDN يحتفظون بالبيانات 5 دقائق.</p>
+            <select class="form-input" id="perf_cache_api" style="margin-top:10px">
+              <option value="1">مفعّل (5 دقائق)</option>
+              <option value="0">معطّل (بدون كاش)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- ضغط HTML -->
+        <div class="perf-card">
+          <div class="perf-card-icon" style="color:#2196F3"><i class="fas fa-compress-alt"></i></div>
+          <div class="perf-card-body">
+            <h3>ضغط HTML</h3>
+            <p>إزالة المسافات الزائدة من الصفحات الديناميكية مثل <code>category.php</code> يُقلّل حجم الاستجابة.</p>
+            <select class="form-input" id="perf_minify_html" style="margin-top:10px">
+              <option value="1">مفعّل</option>
+              <option value="0">معطّل</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- OPcache -->
+        <div class="perf-card">
+          <div class="perf-card-icon" style="color:#FF9800"><i class="fas fa-bolt"></i></div>
+          <div class="perf-card-body">
+            <h3>PHP OPcache</h3>
+            <p>يُسرّع تنفيذ ملفات PHP بتخزينها مُجمَّعة مسبقاً. يُمسح عند الضغط على "مسح الكاش" في أسفل الشريط الجانبي.</p>
+            <div id="opcache-status" style="margin-top:10px">
+              <span style="color:#aaa;font-size:12px">جارٍ التحقق...</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ======= TRACKING TAB ======= -->
+    <div id="tab-tracking" class="tab-content">
+      <div class="tab-toolbar">
+        <div class="toolbar-left">
+          <h2 class="tab-title">كودات التتبع والتحليل</h2>
+        </div>
+        <button class="btn-add" onclick="saveTrackingCodes()">
+          <i class="fas fa-save"></i> حفظ الكودات
+        </button>
+      </div>
+
+      <!-- Hints -->
+      <div class="tracking-hints">
+        <div class="hint-card">
+          <i class="fab fa-google"></i>
+          <div>
+            <strong>Google Analytics</strong>
+            <p>الصق كود gtag.js أو GA4 في خانة كود الهيدر</p>
+          </div>
+        </div>
+        <div class="hint-card">
+          <i class="fab fa-facebook-f"></i>
+          <div>
+            <strong>Meta / Facebook Pixel</strong>
+            <p>الصق كود البيكسل في خانة كود الهيدر</p>
+          </div>
+        </div>
+        <div class="hint-card">
+          <i class="fas fa-tag"></i>
+          <div>
+            <strong>Google Tag Manager</strong>
+            <p>كود الـ &lt;script&gt; في الهيدر، وكود الـ &lt;noscript&gt; في البودي</p>
+          </div>
+        </div>
+        <div class="hint-card">
+          <i class="fas fa-chart-line"></i>
+          <div>
+            <strong>أي كود تتبع آخر</strong>
+            <p>TikTok Pixel, Snapchat Pixel, X Pixel...</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tracking-form">
+        <!-- Header Code -->
+        <div class="tracking-block">
+          <div class="tracking-block-header">
+            <div class="tracking-block-icon"><i class="fas fa-code"></i></div>
+            <div>
+              <h3>كود الـ &lt;head&gt;</h3>
+              <p>يُحقن مباشرة داخل &lt;head&gt; في الموقع</p>
+            </div>
+          </div>
+          <textarea id="header_code" class="code-textarea" rows="10"
+            placeholder="<!-- Google Analytics -->\n<script async src='https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX'></script>\n<script>\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag('js', new Date());\n  gtag('config', 'G-XXXXXXXXXX');\n</script>"></textarea>
+        </div>
+
+        <!-- Body Code -->
+        <div class="tracking-block">
+          <div class="tracking-block-header">
+            <div class="tracking-block-icon"><i class="fas fa-code"></i></div>
+            <div>
+              <h3>كود الـ &lt;body&gt;</h3>
+              <p>يُحقن في بداية &lt;body&gt; في الموقع (للـ noscript)</p>
+            </div>
+          </div>
+          <textarea id="body_code" class="code-textarea" rows="6"
+            placeholder="<!-- Google Tag Manager (noscript) -->\n<noscript><iframe src='https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX' height='0' width='0' style='display:none;visibility:hidden'></iframe></noscript>"></textarea>
+        </div>
+      </div>
+    </div>
+
+  <!-- ============================================================
+    PAGES TAB (Terms & Privacy)
+  ============================================================ -->
+  <div id="tab-pages" class="tab-content">
+
+    <div class="admin-section-header">
+      <div class="admin-section-icon"><i class="fas fa-file-alt"></i></div>
+      <div>
+        <div class="admin-section-title">إدارة الصفحات</div>
+        <div class="admin-section-sub">تحرير محتوى صفحات الشروط والخصوصية — يُعرض على الزوار مباشرةً</div>
+      </div>
+    </div>
+
+    <!-- Terms Card -->
+    <div class="page-editor-card">
+      <div class="page-editor-header">
+        <div class="page-editor-header-left">
+          <div class="page-editor-hicon"><i class="fas fa-file-contract"></i></div>
+          <div>
+            <div class="page-editor-label">الشروط والأحكام</div>
+            <div class="page-editor-sub">Terms &amp; Conditions</div>
+          </div>
+        </div>
+        <a href="../terms.html" target="_blank" class="page-preview-btn">
+          <i class="fas fa-external-link-alt"></i> معاينة
+        </a>
+      </div>
+      <div class="page-editor-body">
+        <div id="quill-terms"></div>
+      </div>
+      <div class="page-editor-footer">
+        <span class="page-editor-tip"><i class="fas fa-info-circle" style="margin-left:4px"></i>التغييرات تظهر فوراً بعد الحفظ</span>
+        <button class="btn-save" onclick="savePage('terms')">
+          <i class="fas fa-save"></i> حفظ الشروط والأحكام
+        </button>
+      </div>
+    </div>
+
+    <!-- Privacy Card -->
+    <div class="page-editor-card">
+      <div class="page-editor-header">
+        <div class="page-editor-header-left">
+          <div class="page-editor-hicon" style="background:rgba(99,179,237,0.12);color:#63b3ed">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <div>
+            <div class="page-editor-label">سياسة الخصوصية</div>
+            <div class="page-editor-sub">Privacy Policy</div>
+          </div>
+        </div>
+        <a href="../privacy.html" target="_blank" class="page-preview-btn">
+          <i class="fas fa-external-link-alt"></i> معاينة
+        </a>
+      </div>
+      <div class="page-editor-body">
+        <div id="quill-privacy"></div>
+      </div>
+      <div class="page-editor-footer">
+        <span class="page-editor-tip"><i class="fas fa-info-circle" style="margin-left:4px"></i>التغييرات تظهر فوراً بعد الحفظ</span>
+        <button class="btn-save" onclick="savePage('privacy')">
+          <i class="fas fa-save"></i> حفظ سياسة الخصوصية
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /tab-pages -->
+
+  <!-- ============================================================
+    COMPETITION TAB
+  ============================================================ -->
+  <div id="tab-competition" class="tab-content">
+
+    <!-- Section Header -->
+    <div class="admin-section-header">
+      <div class="admin-section-icon" style="background:rgba(255,215,0,0.1);color:#ffd700">
+        <i class="fas fa-trophy"></i>
+      </div>
+      <div>
+        <div class="admin-section-title">إدارة المسابقة</div>
+        <div class="admin-section-sub">إعدادات المسابقة ومتابعة المشاركين</div>
+      </div>
+      <a href="../register/" target="_blank" class="admin-section-link">
+        <i class="fas fa-external-link-alt"></i> صفحة التسجيل
+      </a>
+    </div>
+
+    <!-- Settings Card -->
+    <div class="comp-card">
+      <div class="comp-card-header">
+        <i class="fas fa-sliders-h"></i> إعدادات المسابقة
+      </div>
+      <div class="comp-card-body">
+        <div class="comp-field-grid">
+
+          <!-- Toggle -->
+          <div>
+            <div class="comp-field-label">
+              <i class="fas fa-toggle-on"></i> حالة استقبال التسجيلات
+            </div>
+            <div class="comp-toggle-row">
+              <label class="toggle-switch">
+                <input type="checkbox" id="comp_active" checked />
+                <span class="toggle-track"><span class="toggle-thumb"></span></span>
+              </label>
+              <span class="comp-toggle-text">تفعيل / إيقاف التسجيل</span>
+            </div>
+          </div>
+
+          <!-- Ref Prefix -->
+          <div>
+            <div class="comp-field-label"><i class="fas fa-hashtag"></i> بادئة رقم المرجع</div>
+            <input type="text" id="comp_ref_prefix" class="form-input comp-input-sm"
+                   placeholder="MK" maxlength="8" />
+            <div class="comp-field-hint">مثال: MK ← MK-محمد38472</div>
+          </div>
+
+          <!-- Title -->
+          <div class="comp-field-full">
+            <div class="comp-field-label"><i class="fas fa-heading"></i> عنوان المسابقة</div>
+            <input type="text" id="comp_title" class="form-input"
+                   placeholder="مسابقة مخازن العناية" />
+            <div class="comp-field-hint">يظهر في صفحة التسجيل ونافذة التهنئة</div>
+          </div>
+
+          <!-- Subtitle -->
+          <div class="comp-field-full">
+            <div class="comp-field-label"><i class="fas fa-align-left"></i> وصف / عنوان فرعي</div>
+            <input type="text" id="comp_subtitle" class="form-input"
+                   placeholder="سجّل بياناتك وكن جزءاً من المسابقة" />
+            <div class="comp-field-hint">يظهر أسفل عنوان المسابقة في صفحة التسجيل</div>
+          </div>
+
+          <!-- Success message -->
+          <div class="comp-field-full">
+            <div class="comp-field-label"><i class="fas fa-comment-dots"></i> رسالة التهنئة</div>
+            <textarea id="comp_success_msg" class="form-input" rows="3" style="resize:vertical"
+                      placeholder="شكراً لمشاركتك، سيتم التواصل معك في حال فوزك..."></textarea>
+            <div class="comp-field-hint">تظهر أسفل اسم المشارك في نافذة التهنئة</div>
+          </div>
+
+        </div><!-- /grid -->
+      </div><!-- /body -->
+      <div class="comp-card-footer">
+        <button class="btn-save" onclick="saveCompSettings()">
+          <i class="fas fa-save"></i> حفظ الإعدادات
+        </button>
+      </div>
+    </div><!-- /settings card -->
+
+    <!-- Slider Images Card -->
+    <div class="comp-card" id="slider-card">
+      <div class="comp-card-header">
+        <i class="fas fa-images"></i> صور سلايدر صفحة التسجيل
+      </div>
+      <div class="comp-card-body">
+        <div style="margin-bottom:16px">
+          <div class="comp-field-hint" style="margin-bottom:10px">
+            الصور تظهر فوق نموذج التسجيل كسلايدر تلقائي. الحد الأقصى 10 صور.
+          </div>
+          <label class="btn-save" style="cursor:pointer;display:inline-flex;align-items:center;gap:8px">
+            <i class="fas fa-upload"></i> رفع صورة جديدة
+            <input type="file" id="slider-upload-input" accept="image/*" style="display:none" onchange="uploadSliderImage(this)" />
+          </label>
+        </div>
+        <div id="slider-preview-grid" style="display:flex;flex-wrap:wrap;gap:12px;min-height:60px"></div>
+      </div>
+    </div><!-- /slider card -->
+
+    <!-- Stats -->
+    <div id="comp-stats" class="comp-stats-grid"></div>
+
+    <!-- Registrations Card -->
+    <div class="comp-card">
+      <div class="comp-card-header">
+        <i class="fas fa-users"></i> سجل المشاركين
+      </div>
+
+      <!-- Filters -->
+      <div class="comp-filters">
+        <div class="comp-search-row">
+          <i class="fas fa-search"></i>
+          <input type="text" id="comp-search"
+                 placeholder="بحث باسم / جوال / هوية / بريد..." />
+        </div>
+        <div class="comp-filter-row">
+          <select id="comp-city" class="comp-filter-sel">
+            <option value="">كل المدن</option>
+          </select>
+          <select id="comp-gender" class="comp-filter-sel">
+            <option value="">كل الجنسين</option>
+            <option value="male">ذكر</option>
+            <option value="female">أنثى</option>
+          </select>
+          <input type="date" id="comp-date-from" class="comp-filter-sel" title="من تاريخ" />
+          <input type="date" id="comp-date-to"   class="comp-filter-sel" title="إلى تاريخ" />
+          <button class="comp-filter-btn" onclick="loadRegistrations()">
+            <i class="fas fa-filter"></i> فلترة
+          </button>
+          <button class="comp-filter-btn comp-export-btn" onclick="exportRegistrations()">
+            <i class="fas fa-file-csv"></i> تصدير CSV
+          </button>
+        </div>
+      </div><!-- /filters -->
+
+      <!-- Table -->
+      <div class="table-wrap" style="border-radius:0;border:none;border-top:1px solid var(--border)">
+        <table class="data-table" id="comp-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>رقم المرجع</th>
+              <th>الاسم الكامل</th>
+              <th>البريد</th>
+              <th>الجوال</th>
+              <th>الهوية</th>
+              <th>المدينة</th>
+              <th>الجنس</th>
+              <th>عميل سابق</th>
+              <th>تاريخ التسجيل</th>
+              <th>حذف</th>
+            </tr>
+          </thead>
+          <tbody id="comp-tbody">
+            <tr><td colspan="11" style="text-align:center;color:#888;padding:40px">
+              جارٍ التحميل...
+            </td></tr>
+          </tbody>
+        </table>
+      </div><!-- /table-wrap -->
+    </div><!-- /registrations card -->
+
+  </div><!-- /tab-competition -->
+
+  </div><!-- /content-area -->
+</div><!-- /main-content -->
+
+<!-- ============================================================
+  MODAL
+============================================================ -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modal-title">إضافة</h3>
+      <button class="modal-close" onclick="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body" id="modal-body">
+      <!-- Dynamic form injected by JS -->
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">إلغاء</button>
+      <button class="btn-save" id="modal-save-btn" onclick="saveRecord()">
+        <i class="fas fa-save"></i> حفظ
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+  CONFIRM DELETE DIALOG
+============================================================ -->
+<div class="modal-overlay" id="confirm-overlay">
+  <div class="modal confirm-modal">
+    <div class="confirm-icon"><i class="fas fa-exclamation-triangle"></i></div>
+    <h3>تأكيد الحذف</h3>
+    <p>هل أنت متأكد من حذف هذا العنصر؟ لا يمكن التراجع عن هذا الإجراء.</p>
+    <div class="confirm-actions">
+      <button class="btn-cancel" onclick="closeConfirm()">إلغاء</button>
+      <button class="btn-delete-confirm" id="confirm-delete-btn">
+        <i class="fas fa-trash"></i> حذف
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Quill -->
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+<!-- Admin JS -->
+<script src="assets/js/admin.js"></script>
+
+<!-- ============================================================
+  COMPETITION JS
+============================================================ -->
+<script>
+// ── Competition settings ──────────────────────────────────
+async function loadCompSettings() {
+  try {
+    const res  = await fetch('../api/settings.php?admin=1');
+    const data = await res.json();
+    if (!data.success) return;
+    const map = {};
+    data.data.forEach(r => { map[r.key] = r.value; });
+
+    const compActive = document.getElementById('comp_active');
+    if (compActive) compActive.checked = (map['comp_active'] ?? '1') !== '0';
+
+    ['comp_title','comp_subtitle','comp_success_msg','comp_ref_prefix'].forEach(k => {
+      const el = document.getElementById(k);
+      if (el && map[k] !== undefined) el.value = map[k];
+    });
+
+    // Load slider images
+    const imgs = JSON.parse(map['comp_slider_images'] || '[]');
+    renderSliderPreview(imgs);
+  } catch(e) { console.warn('loadCompSettings error', e); }
+}
+
+async function saveCompSettings() {
+  const payload = {
+    comp_active:      document.getElementById('comp_active').checked ? '1' : '0',
+    comp_title:       document.getElementById('comp_title').value.trim(),
+    comp_subtitle:    document.getElementById('comp_subtitle').value.trim(),
+    comp_success_msg: document.getElementById('comp_success_msg').value.trim(),
+    comp_ref_prefix:  document.getElementById('comp_ref_prefix').value.trim() || 'MK',
+  };
+  try {
+    const res  = await fetch('../api/settings.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    showToast(data.success ? 'تم حفظ إعدادات المسابقة ✓' : (data.message || 'خطأ'), data.success);
+  } catch { showToast('خطأ في الاتصال', false); }
+}
+
+// ── Load registrations ────────────────────────────────────
+async function loadRegistrations() {
+  const search   = document.getElementById('comp-search')?.value    || '';
+  const city     = document.getElementById('comp-city')?.value      || '';
+  const gender   = document.getElementById('comp-gender')?.value    || '';
+  const dateFrom = document.getElementById('comp-date-from')?.value || '';
+  const dateTo   = document.getElementById('comp-date-to')?.value   || '';
+
+  const params = new URLSearchParams({ admin: 1 });
+  if (search)   params.set('search',    search);
+  if (city)     params.set('city',      city);
+  if (gender)   params.set('gender',    gender);
+  if (dateFrom) params.set('date_from', dateFrom);
+  if (dateTo)   params.set('date_to',   dateTo);
+
+  const tbody = document.getElementById('comp-tbody');
+  tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;padding:32px;color:#888">جارٍ التحميل...</td></tr>';
+
+  try {
+    const res  = await fetch('../api/registration.php?' + params.toString());
+    const data = await res.json();
+    if (!data.success) { tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;padding:24px;color:#f55">خطأ في تحميل البيانات</td></tr>'; return; }
+
+    renderCompStats(data.stats);
+    renderCompTable(data.rows);
+    updateCityFilter(data.stats.cities);
+
+    // Update badge
+    const badge = document.getElementById('badge-competition');
+    if (badge) badge.textContent = data.stats.total;
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;padding:24px;color:#f55">تعذّر الاتصال بالخادم</td></tr>';
+  }
+}
+
+function renderCompStats(stats) {
+  const el = document.getElementById('comp-stats');
+  if (!el) return;
+
+  const male   = stats.genders.find(g => g.gender === 'male')?.cnt   || 0;
+  const female = stats.genders.find(g => g.gender === 'female')?.cnt || 0;
+
+  el.innerHTML = `
+    <div class="cstat" style="border-color:var(--border-gold)">
+      <div class="cstat-icon" style="color:var(--gold)"><i class="fas fa-users"></i></div>
+      <div class="cstat-num" style="color:var(--gold)">${stats.total}</div>
+      <div class="cstat-lbl">إجمالي المشاركين</div>
+    </div>
+    <div class="cstat" style="border-color:rgba(37,211,102,0.3)">
+      <div class="cstat-icon" style="color:var(--green)"><i class="fas fa-calendar-day"></i></div>
+      <div class="cstat-num" style="color:var(--green)">${stats.today}</div>
+      <div class="cstat-lbl">مسجلون اليوم</div>
+    </div>
+    <div class="cstat" style="border-color:rgba(109,185,247,0.3)">
+      <div class="cstat-icon" style="color:#6db9f7"><i class="fas fa-mars"></i></div>
+      <div class="cstat-num" style="color:#6db9f7">${male}</div>
+      <div class="cstat-lbl">ذكور</div>
+    </div>
+    <div class="cstat" style="border-color:rgba(247,166,210,0.3)">
+      <div class="cstat-icon" style="color:#f7a6d2"><i class="fas fa-venus"></i></div>
+      <div class="cstat-num" style="color:#f7a6d2">${female}</div>
+      <div class="cstat-lbl">إناث</div>
+    </div>`;
+}
+
+function renderCompTable(rows) {
+  const tbody = document.getElementById('comp-tbody');
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;padding:32px;color:#888">لا توجد بيانات بهذه الفلاتر</td></tr>';
+    return;
+  }
+  tbody.innerHTML = rows.map((r, i) => `
+    <tr>
+      <td>${i + 1}</td>
+      <td><span style="color:var(--gold);font-weight:700;font-size:13px">${esc(r.ref_number)}</span></td>
+      <td style="font-weight:600">${esc(r.full_name)}</td>
+      <td style="font-size:13px;direction:ltr;text-align:right">${esc(r.email)}</td>
+      <td style="direction:ltr;text-align:right">${esc(r.phone)}</td>
+      <td style="direction:ltr;text-align:right;color:#aaa">${esc(r.national_id)}</td>
+      <td>${esc(r.city)}</td>
+      <td>
+        <span class="status-badge ${r.gender==='male' ? 'status-active' : ''}"
+              style="${r.gender==='female'?'background:rgba(247,166,210,0.12);color:#f7a6d2;':''}">
+          ${r.gender === 'male' ? 'ذكر' : 'أنثى'}
+        </span>
+      </td>
+      <td style="text-align:center">
+        ${r.prev_customer == 1
+          ? '<span style="color:#4caf50;font-weight:700">نعم</span>'
+          : '<span style="color:#aaa">لا</span>'}
+      </td>
+      <td style="font-size:13px;color:#aaa;white-space:nowrap">${esc(r.created_at?.slice(0,16) || '')}</td>
+      <td>
+        <button class="btn-icon del" title="حذف"
+                onclick="deleteRegistration(${r.id}, '${esc(r.full_name)}')">
+          <i class="fas fa-trash"></i>
+        </button>
+      </td>
+    </tr>`).join('');
+}
+
+function updateCityFilter(cities) {
+  const sel = document.getElementById('comp-city');
+  if (!sel) return;
+  const current = sel.value;
+  sel.innerHTML = '<option value="">كل المدن</option>'
+    + cities.map(c => `<option value="${esc(c.city)}"${c.city===current?' selected':''}>${esc(c.city)} (${c.cnt})</option>`).join('');
+}
+
+async function deleteRegistration(id, name) {
+  if (!confirm(`حذف تسجيل "${name}"؟`)) return;
+  try {
+    const res  = await fetch(`../api/registration.php?admin=1&id=${id}`, { method: 'DELETE' });
+    const data = await res.json();
+    if (data.success) { showToast('تم الحذف ✓'); loadRegistrations(); }
+    else showToast(data.message || 'خطأ في الحذف', false);
+  } catch { showToast('خطأ في الاتصال', false); }
+}
+
+function exportRegistrations() {
+  const search   = document.getElementById('comp-search')?.value    || '';
+  const city     = document.getElementById('comp-city')?.value      || '';
+  const gender   = document.getElementById('comp-gender')?.value    || '';
+  const dateFrom = document.getElementById('comp-date-from')?.value || '';
+  const dateTo   = document.getElementById('comp-date-to')?.value   || '';
+
+  const params = new URLSearchParams({ admin: 1, export: 'csv' });
+  if (search)   params.set('search',    search);
+  if (city)     params.set('city',      city);
+  if (gender)   params.set('gender',    gender);
+  if (dateFrom) params.set('date_from', dateFrom);
+  if (dateTo)   params.set('date_to',   dateTo);
+
+  window.location.href = '../api/registration.php?' + params.toString();
+}
+
+function esc(str) {
+  return String(str ?? '')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Slider Images Management ──────────────────────────────
+let sliderImages = [];
+
+function renderSliderPreview(imgs) {
+  sliderImages = imgs || [];
+  const grid = document.getElementById('slider-preview-grid');
+  if (!grid) return;
+  if (!sliderImages.length) {
+    grid.innerHTML = '<p style="color:#888;font-size:13px;padding:8px 0">لا توجد صور حالياً</p>';
+    return;
+  }
+  grid.innerHTML = sliderImages.map((url, i) => `
+    <div style="position:relative;width:140px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,207,6,0.2)">
+      <img src="../${esc(url)}" style="width:140px;height:90px;object-fit:cover;display:block" loading="lazy" />
+      <button onclick="deleteSliderImage(${i})" title="حذف"
+        style="position:absolute;top:4px;left:4px;background:rgba(255,60,60,0.85);border:none;
+               color:#fff;width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:13px">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>`).join('');
+}
+
+async function uploadSliderImage(input) {
+  if (!input.files.length) return;
+  if (sliderImages.length >= 10) { showToast('الحد الأقصى 10 صور', false); return; }
+  const formData = new FormData();
+  formData.append('logo', input.files[0]);
+  input.value = '';
+  showToast('جارٍ رفع الصورة...');
+  try {
+    const res  = await fetch('../api/upload.php?type=slider', { method: 'POST', body: formData });
+    const data = await res.json();
+    if (!data.success) { showToast(data.message || 'فشل الرفع', false); return; }
+    sliderImages.push(data.url);
+    await saveSliderImages();
+    renderSliderPreview(sliderImages);
+    showToast('تم رفع الصورة ✓');
+  } catch { showToast('خطأ في الاتصال', false); }
+}
+
+async function deleteSliderImage(idx) {
+  if (!confirm('حذف هذه الصورة من السلايدر؟')) return;
+  sliderImages.splice(idx, 1);
+  await saveSliderImages();
+  renderSliderPreview(sliderImages);
+  showToast('تم حذف الصورة ✓');
+}
+
+async function saveSliderImages() {
+  try {
+    await fetch('../api/settings.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ comp_slider_images: JSON.stringify(sliderImages) }),
+    });
+  } catch { showToast('خطأ في حفظ الصور', false); }
+}
+
+// ── Pages (Terms & Privacy) ───────────────────────────────
+let quillTerms   = null;
+let quillPrivacy = null;
+
+const PAGE_QUILL_OPTS = {
+  theme: 'snow',
+  direction: 'rtl',
+  modules: {
+    toolbar: [
+      [{ header: [1, 2, 3, false] }],
+      ['bold', 'italic', 'underline'],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      [{ align: [] }],
+      ['link'],
+      ['clean'],
+    ],
+  },
+};
+
+async function loadPages() {
+  try {
+    const res  = await fetch('../api/settings.php?admin=1');
+    const data = await res.json();
+    if (!data.success) return;
+    const map = {};
+    data.data.forEach(r => { map[r.key] = r.value; });
+
+    if (!quillTerms) {
+      quillTerms = new Quill('#quill-terms', PAGE_QUILL_OPTS);
+      if (map.page_terms) quillTerms.root.innerHTML = map.page_terms;
+    }
+    if (!quillPrivacy) {
+      quillPrivacy = new Quill('#quill-privacy', PAGE_QUILL_OPTS);
+      if (map.page_privacy) quillPrivacy.root.innerHTML = map.page_privacy;
+    }
+  } catch(e) { console.warn('loadPages error', e); }
+}
+
+async function savePage(type) {
+  const quill = type === 'terms' ? quillTerms : quillPrivacy;
+  if (!quill) return;
+  try {
+    const res  = await fetch('../api/settings.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ['page_' + type]: quill.root.innerHTML }),
+    });
+    const data = await res.json();
+    showToast(data.success ? 'تم الحفظ ✓' : (data.message || 'خطأ'), data.success);
+  } catch { showToast('خطأ في الاتصال', false); }
+}
+
+// ── Hook into tab switch ──────────────────────────────────
+(function patchTabSwitch() {
+  // Wait for admin.js to define switchTab, then wrap it
+  const origSwitch = window.switchTab;
+  window.switchTab = function(tab) {
+    if (origSwitch) origSwitch(tab);
+    if (tab === 'competition') {
+      loadCompSettings();
+      loadRegistrations();
+    }
+    if (tab === 'pages') {
+      loadPages();
+    }
+  };
+  // Also listen for nav-item clicks directly
+  document.querySelectorAll('.nav-item[data-tab="competition"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      loadCompSettings();
+      loadRegistrations();
+    });
+  });
+  document.querySelectorAll('.nav-item[data-tab="pages"]').forEach(btn => {
+    btn.addEventListener('click', () => loadPages());
+  });
+})();
+
+// Live search on Enter key
+document.getElementById('comp-search')?.addEventListener('keydown', e => {
+  if (e.key === 'Enter') loadRegistrations();
+});
+</script>
+</body>
+</html>

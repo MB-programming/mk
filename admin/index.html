@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>تسجيل الدخول | لوحة تحكم مخازن العناية</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/admin.css" />
+</head>
+<body class="login-page">
+
+<div class="login-bg">
+  <img src="../pattern-3.png" alt="" class="login-bg-pattern" />
+</div>
+
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-logo">
+      <img src="../logo-white.png" alt="مخازن العناية" />
+    </div>
+    <h1 class="login-title">لوحة التحكم</h1>
+    <p class="login-sub">تسجيل الدخول للوصول إلى لوحة الإدارة</p>
+
+    <form id="login-form" class="login-form" novalidate>
+      <div id="login-error" class="login-error" style="display:none"></div>
+
+      <div class="form-group">
+        <label class="form-label">
+          <i class="fas fa-user"></i> اسم المستخدم
+        </label>
+        <input
+          type="text"
+          id="username"
+          class="form-input"
+          placeholder="أدخل اسم المستخدم"
+          autocomplete="username"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">
+          <i class="fas fa-lock"></i> كلمة المرور
+        </label>
+        <div class="input-password-wrap">
+          <input
+            type="password"
+            id="password"
+            class="form-input"
+            placeholder="أدخل كلمة المرور"
+            autocomplete="current-password"
+            required
+          />
+          <button type="button" id="toggle-pw" class="toggle-pw" tabindex="-1">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-login" id="login-btn">
+        <span>دخول</span>
+        <i class="fas fa-arrow-left"></i>
+      </button>
+    </form>
+
+    <a href="../index.html" class="back-to-site">
+      <i class="fas fa-home"></i> العودة للموقع
+    </a>
+  </div>
+</div>
+
+<script>
+  // Quick auth check - redirect if already logged in
+  fetch('../api/admin_login.php?action=check')
+    .then(r => r.json())
+    .then(d => { if (d.success) window.location.href = 'dashboard.html'; })
+    .catch(() => {});
+
+  const form    = document.getElementById('login-form');
+  const errBox  = document.getElementById('login-error');
+  const btn     = document.getElementById('login-btn');
+  const togglePw = document.getElementById('toggle-pw');
+  const pwInput  = document.getElementById('password');
+
+  togglePw.addEventListener('click', () => {
+    const isText = pwInput.type === 'text';
+    pwInput.type = isText ? 'password' : 'text';
+    togglePw.querySelector('i').className = isText ? 'fas fa-eye' : 'fas fa-eye-slash';
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const username = document.getElementById('username').value.trim();
+    const password = pwInput.value;
+
+    if (!username || !password) {
+      showError('الرجاء إدخال اسم المستخدم وكلمة المرور');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الدخول...';
+    errBox.style.display = 'none';
+
+    try {
+      const res  = await fetch('../api/admin_login.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        btn.innerHTML = '<i class="fas fa-check"></i> تم بنجاح!';
+        btn.style.background = '#25D366';
+        setTimeout(() => window.location.href = 'dashboard.html', 600);
+      } else {
+        showError(data.message || 'بيانات الدخول غير صحيحة');
+        btn.disabled = false;
+        btn.innerHTML = '<span>دخول</span><i class="fas fa-arrow-left"></i>';
+      }
+    } catch {
+      showError('حدث خطأ في الاتصال بالخادم');
+      btn.disabled = false;
+      btn.innerHTML = '<span>دخول</span><i class="fas fa-arrow-left"></i>';
+    }
+  });
+
+  function showError(msg) {
+    errBox.textContent  = msg;
+    errBox.style.display = 'block';
+  }
+</script>
+</body>
+</html>

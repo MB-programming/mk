@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة إدارة المقالات | مخازن العناية</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="../admin/assets/css/admin.css" />
+  <link rel="stylesheet" href="https://cdn.quilljs.com/1.3.7/quill.snow.css" />
+  <style>
+    /* Quill — تصميم يتناسب مع الأدمن الداكن */
+    #quill-editor-container { border-radius: 8px; overflow: hidden; margin-top: 4px; }
+    .ql-toolbar.ql-snow {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15) !important;
+      border-bottom: none !important;
+      border-radius: 8px 8px 0 0;
+      direction: rtl;
+    }
+    .ql-toolbar .ql-stroke { stroke: #e0f0f5; }
+    .ql-toolbar .ql-fill  { fill:   #e0f0f5; }
+    .ql-toolbar .ql-picker-label { color: #e0f0f5; }
+    .ql-toolbar .ql-picker-options { background: #0e7290; border-color: rgba(255,255,255,0.15); }
+    .ql-toolbar button:hover .ql-stroke,
+    .ql-toolbar button.ql-active .ql-stroke { stroke: #FFCF06; }
+    .ql-toolbar button:hover .ql-fill,
+    .ql-toolbar button.ql-active .ql-fill  { fill: #FFCF06; }
+    .ql-container.ql-snow {
+      border: 1px solid rgba(255,255,255,0.15) !important;
+      border-radius: 0 0 8px 8px;
+      font-family: 'Tajawal', sans-serif;
+    }
+    .ql-editor {
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      min-height: 220px;
+      direction: rtl;
+      text-align: right;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    .ql-editor.ql-blank::before {
+      color: rgba(255,255,255,0.35);
+      font-style: normal;
+      right: 15px; left: auto;
+    }
+    .ql-editor h1, .ql-editor h2, .ql-editor h3 { color: #FFCF06; }
+    .ql-editor a { color: #7dd3f0; }
+    .ql-editor blockquote {
+      border-right: 3px solid #FFCF06;
+      border-left: none;
+      padding-right: 12px;
+      color: #ccc;
+    }
+  </style>
+</head>
+<body class="dashboard-page">
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <img src="../logo-white.png" alt="مخازن العناية" class="sidebar-logo" />
+  </div>
+
+  <nav class="sidebar-nav">
+    <button class="nav-item active" data-tab="articles">
+      <i class="fas fa-newspaper"></i>
+      <span>المقالات</span>
+      <span class="nav-badge" id="badge-articles">0</span>
+    </button>
+  </nav>
+
+  <div class="sidebar-footer">
+    <a href="../index.html" class="sidebar-link" target="_blank">
+      <i class="fas fa-external-link-alt"></i> عرض الموقع
+    </a>
+    <button class="sidebar-link logout-btn" id="logout-btn">
+      <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+    </button>
+  </div>
+</aside>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content" id="main-content">
+
+  <header class="topbar">
+    <button class="menu-toggle" id="menu-toggle">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="topbar-title" id="topbar-title">المقالات</div>
+    <div class="topbar-user">
+      <span class="user-name" id="user-name">...</span>
+      <div class="user-avatar"><i class="fas fa-user"></i></div>
+    </div>
+  </header>
+
+  <div class="content-area">
+
+    <!-- ARTICLES TAB -->
+    <div id="tab-articles" class="tab-content active">
+      <div class="tab-toolbar">
+        <div class="toolbar-left">
+          <h2 class="tab-title">إدارة المقالات</h2>
+          <span class="count-label" id="articles-count"></span>
+        </div>
+        <button class="btn-add" onclick="openModal('article')">
+          <i class="fas fa-plus"></i> إضافة مقال
+        </button>
+      </div>
+      <div class="search-bar">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="بحث في المقالات..." oninput="filterTable('articles-table', this.value)" />
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="articles-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>الصورة</th>
+              <th>العنوان</th>
+              <th>التصنيف</th>
+              <th>الكاتب</th>
+              <th>مميز</th>
+              <th>الحالة</th>
+              <th>المشاهدات</th>
+              <th>تاريخ النشر</th>
+              <th>الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="articles-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modal-title">إضافة مقال</h3>
+      <button class="modal-close" onclick="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">إلغاء</button>
+      <button class="btn-save" id="modal-save-btn" onclick="saveArticle()">
+        <i class="fas fa-save"></i> حفظ
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM DELETE -->
+<div class="modal-overlay" id="confirm-overlay">
+  <div class="modal confirm-modal">
+    <div class="confirm-icon"><i class="fas fa-exclamation-triangle"></i></div>
+    <h3>تأكيد الحذف</h3>
+    <p>هل أنت متأكد من حذف هذا المقال؟ لا يمكن التراجع عن هذا الإجراء.</p>
+    <div class="confirm-actions">
+      <button class="btn-cancel" onclick="closeConfirm()">إلغاء</button>
+      <button class="btn-delete-confirm" id="confirm-delete-btn">
+        <i class="fas fa-trash"></i> حذف
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+<script src="assets/js/articles-admin.js"></script>
+</body>
+</html>
