@@ -1,0 +1,321 @@
+/* ══════════════════════════════════════════════════════
+   مخازن العناية – بطاقة تهنئة عيد الفطر
+   Brand: Yellow #F5C800  |  Black #111111
+   ══════════════════════════════════════════════════════ */
+
+@font-face {
+    font-family: 'PNUFont';
+    src: url('ArbFONTS-PNU-Light.ttf') format('truetype');
+    font-weight: 300 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --mk-yellow:      #F5C800;
+    --mk-yellow-deep: #D4A900;
+    --mk-black:       #111111;
+    --mk-white:       #FFFFFF;
+    --mk-card-bg:     #FFFDF0;
+    --mk-shadow:      rgba(17, 17, 17, 0.18);
+}
+
+body {
+    font-family: 'PNUFont', 'Cairo', -apple-system, sans-serif;
+    background: var(--mk-yellow);
+    color: var(--mk-black);
+    height: 100dvh;
+    overflow: hidden;
+    line-height: 1.6;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── Islamic geometric background pattern ── */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.055;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cg fill='none' stroke='%23111111' stroke-width='0.8'%3E%3Cpolygon points='40,4 47,17 61,12 56,26 70,31 57,38 62,52 48,49 45,63 40,51 35,63 32,49 18,52 23,38 10,31 24,26 19,12 33,17' /%3E%3Cpolygon points='40,22 49,31 40,40 31,31' /%3E%3Ccircle cx='0'  cy='0'  r='2'/%3E%3Ccircle cx='80' cy='0'  r='2'/%3E%3Ccircle cx='0'  cy='80' r='2'/%3E%3Ccircle cx='80' cy='80' r='2'/%3E%3Ccircle cx='40' cy='0'  r='1.2'/%3E%3Ccircle cx='40' cy='80' r='1.2'/%3E%3Ccircle cx='0'  cy='40' r='1.2'/%3E%3Ccircle cx='80' cy='40' r='1.2'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 80px 80px;
+    background-repeat: repeat;
+}
+
+.container {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    max-width: 860px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 1.2rem 1.5rem;
+    scrollbar-width: none;
+}
+.container::-webkit-scrollbar { display: none; }
+
+/* ══ Header ══ */
+.header {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.logo {
+    width: 110px;
+    height: auto;
+    margin-bottom: 0.6rem;
+    animation: eidFadeDown .9s cubic-bezier(.22,1,.36,1) .1s both;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.15));
+}
+
+.eid-deco {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 0.7rem;
+    opacity: 0.65;
+    animation: eidFadeIn .8s ease .4s both;
+}
+
+.eid-crescent {
+    width: 26px;
+    height: 26px;
+    color: var(--mk-black);
+    flex-shrink: 0;
+    animation: crescentFloat 4s ease-in-out infinite;
+}
+.eid-crescent--flip {
+    transform: scaleX(-1);
+    animation: crescentFloatFlip 4s ease-in-out .6s infinite;
+}
+
+.eid-dots {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    animation: dotsShimmer 3s ease-in-out infinite;
+}
+.eid-dots span {
+    display: block;
+    border-radius: 50%;
+    background: var(--mk-black);
+}
+.eid-dots span:nth-child(1),
+.eid-dots span:nth-child(5) { width: 4px; height: 4px; opacity: .5; }
+.eid-dots span:nth-child(2),
+.eid-dots span:nth-child(4) { width: 5px; height: 5px; opacity: .75; }
+.eid-dots span:nth-child(3)  { width: 7px; height: 7px; opacity: 1; }
+
+.title {
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: var(--mk-black);
+    margin-bottom: 0.3rem;
+    letter-spacing: -0.3px;
+    animation: eidFadeUp .9s cubic-bezier(.22,1,.36,1) .55s both;
+}
+
+.subtitle {
+    font-size: 1rem;
+    color: rgba(17,17,17,0.6);
+    animation: eidFadeUp .9s cubic-bezier(.22,1,.36,1) .7s both;
+}
+
+/* ══ Steps container ══ */
+.steps-container {
+    background: var(--mk-card-bg);
+    border-radius: 16px;
+    padding: 1.4rem;
+    box-shadow: 0 8px 32px var(--mk-shadow);
+    animation: eidScaleIn .8s cubic-bezier(.22,1,.36,1) .85s both;
+}
+
+.step {
+    display: none;
+}
+.step.active {
+    display: block;
+    animation: fadeIn 0.4s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.step-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-align: center;
+    color: var(--mk-black);
+    padding-bottom: 0.6rem;
+    border-bottom: 2px solid var(--mk-yellow);
+}
+
+/* ══ Name input ══ */
+.name-input-group {
+    margin-bottom: 1rem;
+}
+.name-input-group label {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--mk-black);
+}
+.name-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1.2rem;
+    font-family: 'PNUFont', 'Cairo', sans-serif;
+    font-weight: 600;
+    text-align: right;
+    background: var(--mk-white);
+    border: 2px solid #D4A900;
+    border-radius: 12px;
+    color: var(--mk-black);
+    transition: all 0.3s;
+    outline: none;
+}
+.name-input::placeholder { color: rgba(17,17,17,0.35); }
+.name-input:focus {
+    border-color: var(--mk-black);
+    box-shadow: 0 0 0 3px rgba(245,200,0,0.45);
+}
+
+/* ══ Buttons ══ */
+.btn {
+    padding: 0.85rem 1.6rem;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: 'PNUFont', 'Cairo', sans-serif;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+}
+
+.btn-primary {
+    background: var(--mk-black);
+    color: var(--mk-yellow);
+    width: 100%;
+}
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(17,17,17,0.35);
+}
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-secondary {
+    background: var(--mk-yellow);
+    color: var(--mk-black);
+    border: 2px solid var(--mk-yellow-deep);
+}
+.btn-secondary:hover {
+    background: var(--mk-yellow-deep);
+    transform: translateY(-2px);
+}
+
+/* ══ Result step ══ */
+.result-container {
+    text-align: center;
+}
+
+.canvas-wrapper {
+    background: rgba(17,17,17,0.06);
+    border-radius: 16px;
+    padding: 0.75rem;
+    margin-bottom: 1.2rem;
+    display: inline-block;
+    max-width: 100%;
+}
+
+#result-canvas {
+    max-width: 100%;
+    max-height: 65vh;
+    width: auto;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px var(--mk-shadow);
+    display: block;
+}
+
+.buttons-row {
+    display: flex;
+    gap: 0.8rem;
+}
+.buttons-row .btn {
+    flex: 1;
+    width: auto;
+}
+
+.hidden { display: none; }
+
+/* ══ Step 2 animations ══ */
+#step2.active .canvas-wrapper {
+    animation: eidScaleIn .55s cubic-bezier(.22,1,.36,1) both;
+}
+#step2.active .buttons-row {
+    animation: eidFadeUp .5s ease .25s both;
+}
+
+/* ══ Keyframes ══ */
+@keyframes eidFadeDown {
+    from { opacity: 0; transform: translateY(-28px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes eidFadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes eidFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+@keyframes eidScaleIn {
+    from { opacity: 0; transform: scale(0.92); }
+    to   { opacity: 1; transform: scale(1); }
+}
+@keyframes crescentFloat {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-5px); }
+}
+@keyframes crescentFloatFlip {
+    0%, 100% { transform: scaleX(-1) translateY(0); }
+    50%       { transform: scaleX(-1) translateY(-5px); }
+}
+@keyframes dotsShimmer {
+    0%, 100% { opacity: 0.65; }
+    50%       { opacity: 1; }
+}
+
+/* ══ Responsive ══ */
+@media (max-width: 480px) {
+    .title  { font-size: 1.15rem; }
+    .logo   { width: 90px; }
+    .steps-container { padding: 1rem; }
+    .buttons-row { flex-direction: column; }
+    #result-canvas { max-height: 55vh; }
+}

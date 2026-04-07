@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>الشروط والأحكام | مخازن العناية</title>
+  <link rel="icon" type="image/x-icon" href="favicon.jpeg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="api/minify.php?f=assets/css/style.css&v=3" />
+  <link rel="preload" as="style"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  </noscript>
+  <style>
+    html, body { background: #0a0a0a; }
+    .site-header { transform: translateY(0) !important; }
+
+    .page-content-wrap {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 90px 20px 60px;
+    }
+    .page-hero {
+      text-align: center;
+      margin-bottom: 40px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid rgba(255,207,6,0.2);
+    }
+    .page-hero h1 {
+      font-size: clamp(24px, 4vw, 36px);
+      font-weight: 800;
+      color: #FFCF06;
+      font-family: 'Tajawal', sans-serif;
+      margin-bottom: 8px;
+    }
+    .page-hero p { font-size: 14px; color: #888; font-family: 'Tajawal', sans-serif; }
+
+    /* Quill-generated content styles */
+    .page-body {
+      color: #d0d0d0;
+      font-family: 'Tajawal', sans-serif;
+      line-height: 1.9;
+      font-size: 15px;
+    }
+    .page-body h1, .page-body h2, .page-body h3 {
+      color: #FFCF06;
+      font-weight: 700;
+      margin: 28px 0 12px;
+    }
+    .page-body h1 { font-size: 22px; }
+    .page-body h2 { font-size: 19px; }
+    .page-body h3 { font-size: 16px; color: #f0f0f0; }
+    .page-body p { margin-bottom: 14px; }
+    .page-body ul, .page-body ol { padding-right: 24px; margin-bottom: 14px; }
+    .page-body li { margin-bottom: 6px; }
+    .page-body a { color: #FFCF06; text-decoration: underline; }
+    .page-body strong { color: #fff; }
+    .page-body em { color: #aaa; }
+
+    .page-loading, .page-empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: #888;
+      font-family: 'Tajawal', sans-serif;
+    }
+    .page-empty {
+      border: 1px dashed rgba(255,207,6,0.2);
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Site Header -->
+<header id="site-header" class="site-header visible scrolled">
+  <div class="header-inner">
+    <a href="index.html" class="header-logo">
+      <img src="logob.webp" alt="مخازن العناية" />
+    </a>
+    <nav class="header-nav">
+      <a href="index.html" style="font-size:18px;">الرئيسية</a>
+      <a href="https://wa.me/966920029921"
+         style="padding: 0px; margin-bottom: -6px; font-size: 19px">
+        <i class="fa-brands fa-whatsapp"></i>
+      </a>
+      <i class="fa-solid fa-phone">
+        <a href="tel:+966920029921">92002 9921</a>
+      </i>
+    </nav>
+  </div>
+</header>
+
+<!-- Content -->
+<div class="page-content-wrap">
+  <div class="page-hero">
+    <h1><i class="fas fa-file-contract" style="margin-left:10px;font-size:0.85em"></i>الشروط والأحكام</h1>
+    <p id="page-date">مخازن العناية</p>
+  </div>
+  <div id="page-body" class="page-body">
+    <div class="page-loading">
+      <i class="fas fa-spinner fa-spin" style="font-size:24px;margin-bottom:12px;display:block"></i>
+      جارٍ التحميل...
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="footer-pattern">
+    <img src="api/img.php?src=pattern-5.webp&w=800" alt="" aria-hidden="true" loading="lazy" />
+  </div>
+  <div class="container">
+    <div class="footer-inner">
+      <img src="logob.webp" alt="مخازن العناية" class="footer-logo" loading="lazy" />
+      <p class="footer-copy">© 2025 مخازن العناية. جميع الحقوق محفوظة.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+fetch('api/settings.php')
+  .then(r => r.json())
+  .then(d => {
+    const content = d.settings?.page_terms || '';
+    const el = document.getElementById('page-body');
+    if (content && content.trim() && content.trim() !== '<p><br></p>') {
+      el.innerHTML = content;
+    } else {
+      el.innerHTML = '<div class="page-empty"><i class="fas fa-file-alt" style="font-size:32px;margin-bottom:12px;display:block"></i>لم يتم إضافة المحتوى بعد.</div>';
+    }
+  })
+  .catch(() => {
+    document.getElementById('page-body').innerHTML =
+      '<div class="page-empty">تعذّر تحميل المحتوى، يرجى المحاولة لاحقاً.</div>';
+  });
+</script>
+</body>
+</html>
